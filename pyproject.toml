@@ -1,0 +1,31 @@
+[project]
+name = "server-inventory"
+version = "0.1.0"
+description = "Server Inventory Management System"
+authors = [
+    {name = "User", email = "user@example.com"},
+]
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "psycopg[binary]>=3.1.17",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.1.0",
+    "typer[all]>=0.9.0",
+    "requests>=2.31.0",
+]
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.26.0",
+]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
