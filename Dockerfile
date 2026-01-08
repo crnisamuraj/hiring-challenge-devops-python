@@ -1,11 +1,44 @@
-FROM python:3.11-slim
+# Build Stage
+FROM python:3.10-slim-bullseye as builder
 
 WORKDIR /app
 
-COPY pyproject.toml .
-RUN pip install --no-cache-dir .
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-COPY app ./app
-COPY cli ./cli
+RUN pip install --upgrade pip
+
+COPY pyproject.toml .
+# Install dependencies into server_inventory.egg-info and get requirements
+# We'll use a trick to install dependencies into a virtual environment or just user install
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels .
+# Better approach: Generate strict requirements.txt from pyproject.toml or just install .
+# Since we don't have a lock file, we install directly for this example but in multiple stages.
+
+COPY . .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels .
+
+# Runtime Stage
+FROM python:3.10-slim-bullseye
+
+WORKDIR /app
+
+# Create a non-root user
+RUN addgroup --system app && adduser --system --group app
+
+# Install Runtime Dependencies
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/pyproject.toml .
+
+# Install dependencies from wheels
+RUN pip install --no-cache /wheels/*
+
+COPY . /app
+
+# Change ownership
+RUN chown -R app:app /app
+
+# Switch to non-root user
+USER app
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

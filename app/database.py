@@ -3,7 +3,9 @@ import psycopg
 from psycopg.rows import dict_row
 from contextlib import asynccontextmanager
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://admin:password@localhost:5432/inventory")
+from app.config import settings
+
+DATABASE_URL = settings.DATABASE_URL
 
 class Database:
     def __init__(self):
