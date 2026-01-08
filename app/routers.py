@@ -28,9 +28,16 @@ async def create_server(server: ServerCreate, conn: AsyncConnection = Depends(ge
         raise HTTPException(status_code=400, detail="Server with this hostname already exists")
 
 @router.get("/", response_model=List[Server])
-async def list_servers(conn: AsyncConnection = Depends(get_db_connection)):
+async def list_servers(
+    limit: int = 100,
+    offset: int = 0,
+    conn: AsyncConnection = Depends(get_db_connection)
+):
     async with conn.cursor() as cur:
-        await cur.execute("SELECT id, hostname, ip_address, state, created_at FROM servers")
+        await cur.execute(
+            "SELECT id, hostname, ip_address, state, created_at FROM servers ORDER BY id LIMIT %s OFFSET %s",
+            (limit, offset)
+        )
         servers = await cur.fetchall()
         return servers
 
