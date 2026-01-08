@@ -9,10 +9,9 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install --upgrade pip
 
 COPY pyproject.toml .
-# Install dependencies into server_inventory.egg-info and get requirements
-# We'll use a trick to install dependencies into a virtual environment or just user install
-# Install dependencies into wheels directory
 COPY . .
+
+# Build wheels for all dependencies including test extras
 RUN pip wheel --no-cache-dir --wheel-dir /app/wheels ".[test]"
 
 # Runtime Stage
