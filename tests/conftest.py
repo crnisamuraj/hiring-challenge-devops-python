@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 import asyncio
 from httpx import AsyncClient, ASGITransport
 from app.main import app
@@ -15,7 +16,7 @@ def event_loop():
     yield loop
     loop.close()
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 async def db_pool():
     # Ensure tables exist
     # In a real app, we would run alembic migrations here
@@ -45,7 +46,7 @@ async def db_pool():
              """)
     yield
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def override_get_db(db_pool):
     # We want a fresh transaction for each test that rolls back
     # But for simplicity with psycopg3 async, we can just TRUNCATE or similar.
@@ -60,7 +61,7 @@ async def override_get_db(db_pool):
     async for conn in get_db_connection():
         yield conn
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client(override_get_db):
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:

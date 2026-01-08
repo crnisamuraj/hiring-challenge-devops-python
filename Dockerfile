@@ -11,12 +11,9 @@ RUN pip install --upgrade pip
 COPY pyproject.toml .
 # Install dependencies into server_inventory.egg-info and get requirements
 # We'll use a trick to install dependencies into a virtual environment or just user install
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels .
-# Better approach: Generate strict requirements.txt from pyproject.toml or just install .
-# Since we don't have a lock file, we install directly for this example but in multiple stages.
-
+# Install dependencies into wheels directory
 COPY . .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels .
+RUN pip wheel --no-cache-dir --wheel-dir /app/wheels ".[test]"
 
 # Runtime Stage
 FROM python:3.10-slim-bullseye
