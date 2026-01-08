@@ -11,6 +11,10 @@ This project provides a REST API and a CLI for tracking server inventory. It use
 To start the API and Database:
 ```bash
 docker-compose up --build
+
+# Or using Podman
+podman compose up --build
+
 ```
 The API will be available at `http://localhost:8000`.
 Documentation (Swagger UI) is available at `http://localhost:8000/docs`.
