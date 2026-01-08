@@ -30,6 +30,11 @@ Tests are written using `pytest`. You can run them locally if you have valid pyt
    ```bash
    pytest
    ```
+or with podman
+   ```bash
+   podman compose up --build -d
+   podman compose exec api pytest
+   ```
 
 ## CLI Usage
 The CLI is a python script in `cli/main.py`.
