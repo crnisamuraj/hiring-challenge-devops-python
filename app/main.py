@@ -6,6 +6,7 @@ from app.metrics import router as metrics_router
 from app.database import init_pool, close_pool
 from app.logging import setup_logging
 from app.tracing import setup_tracing
+from app.middleware import RequestIDMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +22,9 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Add middleware
+app.add_middleware(RequestIDMiddleware)
 
 # Setup observability
 setup_tracing(app)
